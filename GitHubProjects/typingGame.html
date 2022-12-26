@@ -1,100 +1,122 @@
-<!---HTML Page of the typing game-->
+<!DOCTYPE html>
 <html>
-    <head>
-        <link rel="stylesheet" href="main.css">
-        <title>Speed Type</title>
-    </head>
+
+<head>
+	<title>Speed Typing Game</title>
+</head>
+
 <body>
-    <div class="game-container">
-        <h1>Speed Typing Game</h1>
-        <p>Type the phrase as fast as you can:</p>
-        <p id="phrases"></p>
-        <input type="text" id="typing-field">
-        <button onclick="startGame()">Start</button>
-        <p id="result"></p>
-      </div>
+	<div class="game-container">
+		<h1>Speed Typing Game</h1>
+		<p>Type the phrase as fast as you can:</p>
+		<p id="phrases"></p>
+		<input type="text" id="typing-field">
+		<button onclick="startGame()">Start</button>
+		<p id="wpm"></p>
+	</div>
+	<!--Start the JavaScript Code-->
+	<script>
+	// Random Phrases
+	const phrases = [
+	'so fat not even Dora can explore her',
+    'so  fat I swerved to miss her and ran out of gas',
+    'so smelly she put on Right Guard and it went left',
+    'so fat she hasn’t got cellulite, she’s got celluheavy',
+    'so fat she don’t need no internet – she’s already world wide',
+    'so hair her armpits look like Don King in a headlock',
+    'so classless she could be a Marxist utopia',
+    'so fat she can hear bacon cooking in Canada',
+    'so fat she won “The Bachelor” because she all those other bitches',
+    'so stupid she believes everything that Brian Williams says',
+    'so ugly she scared off Flavor Flav',
+    'is like Domino’s Pizza, one call does it all',
+    'is twice the man you are',
+    'is like Bazooka Joe, 5 cents a blow',
+    'is like an ATM, open 24/7',
+    'is like a championship ring, everybody puts a finger in her',
+	'She grinned with delight at the sight of her ice cream cone.',
+	'Wearing long sleeves in the winter is a good idea.',
+	'I do not know where the list of my friends went.',
+	'I took him to the park, ordered room service, and let him stay up late to eat ice cream.',
+	'He wore a red shirt and khakis to Target and was mistaken for an employee.',
+	'A list of required hardware is available here.',
+	'Tommy lost the shopping list his mother had given him and just bought things he wanted to eat.',
+	'I was scared to go to a monster movie, but my dad said he would sit with me, so we went last night.',
+	'Should we all just take a moment to breathe, please!',
+	'The monkey bit the apple and spat it at the giraffe.'
+];
+	// use a regular expression to insert <span> elements around each character in the phrase
+	const modifiedPhrases = phrases.map(phrase => phrase.replace(/(.)/g, '<span>$1</span>'));
+	// get a reference to the typing field and result element
+	const typingField = document.getElementById('typing-field');
+	const wpm = document.getElementById('wpm');
+	// define the correct phrase
+	const correctPhrase = modifiedPhrases[Math.floor(Math.random() * modifiedPhrases.length)];
+
+	function highlightCharacter(index, length) {
+		if(index >= length) {
+			return;
+		}
+		// get a reference to all the span elements
+		const spans = document.querySelectorAll('#phrases span');
+		// loop through all the span elements
+		for(let i = 0; i < length; i++) {
+			// if the current span element matches the character at the given index, set the background color to the highlight color
+			if(i === index) {
+				spans[i].style.backgroundColor = 'yellow';
+			} else {
+				// otherwise, set the background color to the default color
+				spans[i].style.backgroundColor = 'initial';
+			}
+		}
+	}
+	// add an event listener to the typing field. This will check to see if the user releases a key
+	typingField.addEventListener('keyup', function(event) {
+		// Get the value of the typing field
+		const value = event.target.value;
+		// highlight the character at the current index
+		highlightCharacter(value.length - 1, correctPhrase.length);
+		// Check to see if the value matches the phrase that is shown
+		if(correctPhrase.split(' ').every(word => value.includes(word))) {
+			// Calculate the time taken to type the phrase
+			const timeTaken = new Date().getTime() - startTime;
+			const WPM = Math.round(correctPhrase.split(' ').length / (timeTaken / 1000 / 60));
+			// update the WPM display
+			wpm.innerHTML = `${WPM} WPM`;
+			// reset the start time
+			startTime = new Date().getTime();
+			// Clear the timer
+			clearInterval(timer);
+		}
+	});
+	let timer = null;
+	// Set the start time for the game
+	let startTime = new Date().getTime();
+  
+	function startGame() {
+		typingField.value = '';
+		// set the start time
+		startTime = new Date().getTime();
+		// Display the phrase
+		document.getElementById('phrases').innerHTML = correctPhrase;
+		// Start the timer
+		timer = setInterval(updateWPM, 1000);
+	}
+
+	function updateWPM() {
+		// Calculate the elapsed time
+		const elapsedTime = new Date().getTime() - startTime;
+		// Calculate the average time per word
+		const averageTimePerWord = elapsedTime / typingField.value.split(' ').length;
+		// Convert the average time per word to minutes
+		const averageTimePerWordInMinutes = averageTimePerWord / 1000 / 60;
+		// Calculate the WPM
+		const WPM = Math.round(1 / averageTimePerWordInMinutes);
+		// Update the WPM display
+		wpm.innerHTML = `${WPM} WPM`;
+	}
+	</script>
+</body>
+
 </html>
 
-<!--Start the JavaScript Code-->
-<script>
-    //Random Phrases
-    const phrases = ['I’m Commander Shepard, and this is my favorite store on the Citadel!',
-    'We’re not tools of the government or anyone else. Fighting was the only thing I was good at, but at least I always fought for what I believed in.',
-    'They were all dead. The final gunshot was an exclamation mark to everything that had led to this point. I released my finger from the trigger. And then it was over.',
-    'The sun went down with practiced bravado. Twilight crawled across the sky, laden with foreboding. I didn’t like the way the show started. But they had given me the best seat in the house. Front row center.',
-    'The healthy human mind doesn’t wake up in the morning thinking this is its last day on Earth. But I think that’s a luxury, not a curse. To know you’re close to the end is a kind of freedom. Good time to take… inventory.',
-    'Some trees flourish, others die. Some cattle grow strong, others are taken by wolves. Some men are born rich enough and dumb enough to enjoy their lives. Ain’t nothing fair.',
-    'You can’t break a man the way you break a dog or a horse. The harder you beat a man, the taller he stands.',
-    'The world fears the inevitable plummet into the abyss. Watch for that moment and when it comes, do not hesitate to leap. It is only when you fall that you learn whether you can fly',
-    'Boss… you were right. It’s not about changing the world. It’s about doing our best to leave the world… the way it is. It’s about respecting the will of others and believing in your own.',
-    'Tell me Bats. What are you scared of? Failing to save this cesspool of a city? Not finding the Commissioner in time? Me, in a thong',
-    'War is where the young and stupid are tricked by the old and bitter into killing each other.',
-    'You gave them the one thing that was stolen from them. A chance. A chance to learn. To find love. To live. And in the end what was your reward? You never said. But I think I know: a family.',
-    'Time passes, people move. Like a river’s flow, it never ends. A childish mind will turn to noble ambition.',
-    'At the end of the day, as long as there are two people left on the planet, someone is gonna want someone dead.',
-    'What is a man but the sum of his memories? We are the stories we live, the tales we tell ourselves.',
-    'What is better – to be born good, or to overcome your evil nature through great effort?',
-    'No Russian.'
-]
-
-  // use a regular expression to insert <span> elements around each character in the phrase
-    const modifiedPhrases = phrases.map(phrase => phrase.replace(/(.)/g, '<span>$1</span>'));
-
-// get a reference to the typing field and result element
-  const typingField = document.getElementById('typing-field');
-  const result = document.getElementById("result");
-
-  // define the correct phrase
-  const correctPhrase = modifiedPhrases[Math.floor(Math.random() * modifiedPhrases.length)];
-
-  // add a function to highlight the character at the given index
-function highlightCharacter(index, length) {
-
-  // get a reference to all the span elements
-  const spans = document.querySelectorAll("#phrases span");
-
-  // loop through all the span elements
-  for (let i = 0; i < length; i++) {
-
-    // if the current span element matches the character at the given index, set the background color to the highlight color
-    if (i === index) {
-        
-      spans[i].style.backgroundColor = "yellow";
-    } else {
-
-      // otherwise, set the background color to the default color
-      spans[i].style.backgroundColor = "initial";
-    }
-  }
-}
-
-// add an event listen to the typing field. This will check to see if the user releases a key
-typingField.addEventListener("keyup", function(event) {
-  // Get the value of the typing field
-  const value = event.target.value;
-  // highlight the character at the current index
-  highlightCharacter(value.length - 1, correctPhrase.length);
-  // Check to see if the value matches the phrase that is shown
-  if (correctPhrase.split(" ").every(word => value.includes(word))) {
-    // Calculate the time taken to type the phrase
-    const timeTaken = new Date().getTime() - startTime;
-    const WPM = Math.round(correctPhrase.split(" ").length / (timeTaken / 1000 / 60));
-    //display the result
-    result.innerHTML = `You typed the prompt in ${WPM} Words Per Minute!`;
-    // show the result element
-    result.style.display = "block";
-  }
-});
-
-
-  // Set the start time for the game
-  let startTime;
-  function startGame() {
-    typingField.value = "";
-    result.innerHTML = "";
-    // set the start time
-    startTime = new Date().getTime();
-    //Display the phrase
-    document.getElementById("phrases").innerHTML = correctPhrase;
-  }
-</script>
